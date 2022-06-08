@@ -1,9 +1,3 @@
 from middleware.PgConection import PgConection
-import requests
+import middleware.TongoyAPI as tongoy
 
-
-
-def checkRutNow(rut):
-    url = 'https://losvilos.ucn.cl/tongoy/ab.php?o=pa'
-    x = requests.get(url)
-    #checkear status code
