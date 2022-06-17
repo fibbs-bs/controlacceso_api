@@ -25,6 +25,8 @@ class DbConnection(object):
         self.conn.commit()
         self.cursor.close()
 
+    
+
     def executeDaily(self,json):
         start_time = time.time()
         self.cursor = self.conn.cursor()
@@ -33,19 +35,13 @@ class DbConnection(object):
         self.conn.commit()
         print("Delete in",self.__class__.__name__)
         for row in json:
-            #Personas (borrar)
-            if self.__class__.__name__=="PgConnection": 
-                try:
-                    self.cursor.execute("insert into persona (rut,tipo) values ('Y','D')".replace('Y',str(row['rut'])))
-                    self.conn.commit()
-                except:
-                    print(row['rut'])
             #Planificacion
             try:
                 self.cursor.execute(q['planificacion']['insert'].replace('X',self.dayN+'-'+row['bloque']).replace('Y',str(row['id'])))
                 self.conn.commit()
             except Exception as e:
-                if self.__class__.__name__=="PgConnection":
+                print(e)
+                if self.__class__.__name__ == "PgConnection":
                     self.conn.rollback()
                 else:
                     self.cursor.execute("rollback")
@@ -55,7 +51,7 @@ class DbConnection(object):
                 self.conn.commit()
             except Exception as e:
                 print(e)
-                if self.__class__.__name__=="PgConnection":
+                if self.__class__.__name__ == "PgConnection":
                     self.conn.rollback()
                 else:
                     self.cursor.execute("rollback")
