@@ -11,10 +11,11 @@ queryset = {
     ,
     "planificacion":{
         'create':'create table planificacion(id text primary key,bloque_horario varchar(4) not null,codigo_sala int not null,foreign key (bloque_horario) references horario(bloque),foreign key (codigo_sala) references sala(codigo));',
-        "insert":"insert into planificacion (bloque_horario,codigo_sala) values ('X',Y)",
-        "delete":'delete from planificacion where bloque_horario = "X"'
+        "insert":"insert into planificacion (id,bloque_horario,codigo_sala) values ('XY','X',Y)",
+        "delete":"delete from planificacion where bloque_horario = 'X'"
     },
     "acceso":{
-        'create':'create table acceso(id serial primary key,id_planificacion text not null,rut_persona text not null,foreign key (id_planificacion) references planificacion(id));'
+        'create':'create table acceso(id serial primary key,id_planificacion text not null,rut_persona text not null,foreign key (id_planificacion) references planificacion(id) on delete cascade);',
+        'insert':"insert into acceso (id_planificacion,rut_persona) values ('X','Y')"
     }
 }

@@ -20,6 +20,4 @@ if __name__ == '__main__':
     #print(result)
     pgCon.close()
     """
-    lite = SQLiteConnection()
-    lite.delete()
-    lite.close()
+    if not dailyExecution(): print("Oh no")

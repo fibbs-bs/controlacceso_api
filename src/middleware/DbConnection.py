@@ -1,11 +1,12 @@
 from util.querys import queryset as q
 from datetime import datetime as date
 from util.bloque import bloques
+import time
 
 class DbConnection(object):
 
     def __init__(self) -> None:
-        self.dayN = date.today().strftime('%A').lower()[0:2]
+        self.dayN = date.today().strftime('%A')[0:2]
         self.conn = None
         self.cursor = None
         self.access = False
@@ -19,18 +20,47 @@ class DbConnection(object):
 
     def delete(self):
         self.cursor = self.conn.cursor()
-        self.cursor.execute("drop table planificacion")
+        self.cursor.execute("drop table acceso")
+        self.cursor.execute(q['acceso']['create'])
         self.conn.commit()
         self.cursor.close()
 
     def executeDaily(self,json):
+        start_time = time.time()
         self.cursor = self.conn.cursor()
         for bloque in list(bloques):
             self.cursor.execute(q['planificacion']['delete'].replace('X',self.dayN+'-'+bloque))
-        for row in json:
-            self.cursor.execute(q['planificacion']['insert'].replace('X',self.dayN+'-'+row['bloque']).replace('Y',str(row['id'])))
         self.conn.commit()
-        print("Ok",self.__class__.__name__)
+        print("Delete in",self.__class__.__name__)
+        for row in json:
+            #Personas (borrar)
+            if self.__class__.__name__=="PgConnection": 
+                try:
+                    self.cursor.execute("insert into persona (rut,tipo) values ('Y','D')".replace('Y',str(row['rut'])))
+                    self.conn.commit()
+                except:
+                    print(row['rut'])
+            #Planificacion
+            try:
+                self.cursor.execute(q['planificacion']['insert'].replace('X',self.dayN+'-'+row['bloque']).replace('Y',str(row['id'])))
+                self.conn.commit()
+            except Exception as e:
+                if self.__class__.__name__=="PgConnection":
+                    self.conn.rollback()
+                else:
+                    self.cursor.execute("rollback")
+            #Acceso
+            try:
+                self.cursor.execute(q['acceso']['insert'].replace('X',self.dayN+'-'+row['bloque']+str(row['id'])).replace('Y',str(row['rut'])))
+                self.conn.commit()
+            except Exception as e:
+                print(e)
+                if self.__class__.__name__=="PgConnection":
+                    self.conn.rollback()
+                else:
+                    self.cursor.execute("rollback")
+                print(self.dayN+'-'+row['bloque'],row['id'])
+        print("Done in",self.__class__.__name__,'with',(time.time()-start_time),"seconds")
         self.cursor.close()
 
     def insert(self):
