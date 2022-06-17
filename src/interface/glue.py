@@ -8,6 +8,8 @@ from middleware.TongoyAPI import get
 def dailyExecution():
     sqliteConn = SQLiteConnection()
     pgConn = PgConnection()
+    if not pgConn.getAccess() or not sqliteConn.getAccess():
+        return False
     #obtiene json() de request
     jsonResult = get()
     #Si result es nulo significa que existen algún error de conexión.
