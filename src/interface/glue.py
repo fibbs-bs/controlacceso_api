@@ -51,6 +51,7 @@ def getAccess(uid,sala):
                     return 200
             return 404
         except Exception as e:
+            print(e)
             return 500
     else:
         return 500
