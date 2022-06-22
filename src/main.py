@@ -21,4 +21,4 @@ if __name__ == '__main__':
     #print(result)
     pgCon.close()
     """
-    print(glue.getAccess('25BEFBC2',3))#Pineda sala de código 3
+    print(glue.getAccess('25BEFBC2',42))#Pineda sala de código 42
