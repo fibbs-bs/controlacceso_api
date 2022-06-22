@@ -4,10 +4,13 @@ const bcrypt = require("bcryptjs");
 
 const authCtrl = {};
 
-authCtrl.getUsuarios = async function (req,res) {
+
+authCtrl.getHistorialAcceso = async function (req,res) {
     await db.query(
-        `select * from persona
-        limit 5 `
+        `select t.nombre as sala, m.rut_persona as rut_usuario,
+        p.bloque_horario as bloque, p.fecha_inicio, p.fecha_fin from acceso m
+        inner join planificacion p on (m.id_planificacion = p.id)
+        inner join sala t on (t.codigo = p.codigo_sala) `
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({

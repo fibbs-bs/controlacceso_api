@@ -4,12 +4,11 @@ const express = require ("express");
 const router= express.Router();
 
 
+
 router.get(
-    "/getUsuarios",
-    authCtrl.getUsuarios
+    "/getHistorialAcceso",
+    authCtrl.getHistorialAcceso
 );
-
-
 
 
 
