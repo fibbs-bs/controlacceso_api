@@ -14,8 +14,13 @@ queryset = {
         "insert":"insert into planificacion (id,bloque_horario,codigo_sala) values ('XY','X',Y)",
         "delete":"delete from planificacion where bloque_horario = 'X'"
     },
+    "persona":{
+        "create":"create table persona(rut text primary key,uid text);"
+    },
     "acceso":{
         'create':'create table acceso(id serial primary key,id_planificacion text not null,rut_persona text not null,foreign key (id_planificacion) references planificacion(id) on delete cascade);',
-        'insert':"insert into acceso (id_planificacion,rut_persona) values ('X','Y')"
+        'insertP':"insert into acceso (id_planificacion,rut_persona) values ('X','Y')",
+        'insertQ':"insert into acceso (id_planificacion,rut_persona)) values ('X',(select rut from persona where uid = 'Y'))",
+        'select':"select uid "
     }
 }

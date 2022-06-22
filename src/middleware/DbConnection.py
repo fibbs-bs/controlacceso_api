@@ -11,12 +11,29 @@ class DbConnection(object):
         self.cursor = None
         self.access = False
 
-    def select(self):
+    def getDayN(self):
+        return self.dayN
+
+    def selectUID(self,uid,bloque,sala):
         self.cursor = self.conn.cursor()
-        self.cursor.execute("select * from sala")
+        if self.__class__.__name__ == "PgConnection":
+            self.cursor.execute("select getAccess('{}','{}',{})".format(uid,bloque,sala))
+        else:
+            self.cursor.execute("")
         for el in self.cursor.fetchall():
             print(el)
         self.cursor.close()
+        return self.cursor.fetchone()
+
+    def getRut(self,uid):
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("select rut from persona where uid = '{}'".format(uid))
+        data = self.cursor.fetchone()
+        self.cursor.close()
+        if data[0] != '':
+            return data[0]
+        else:
+            return None
 
     def delete(self):
         self.cursor = self.conn.cursor()
@@ -24,8 +41,6 @@ class DbConnection(object):
         self.cursor.execute(q['acceso']['create'])
         self.conn.commit()
         self.cursor.close()
-
-    
 
     def executeDaily(self,json):
         start_time = time.time()
@@ -59,25 +74,6 @@ class DbConnection(object):
         print("Done in",self.__class__.__name__,'with',(time.time()-start_time),"seconds")
         self.cursor.close()
 
-    def insert(self):
-        arch = open("middleware/salas.csv")
-        linea = arch.readline().strip()
-        linea = arch.readline().strip()
-        self.cursor = self.conn.cursor()
-        while linea!="":
-            partes = linea.split(",")
-            self.cursor.execute(q["sala"]["insert"].replace('x',partes[0]).replace('y',partes[1]))
-            linea = arch.readline().strip()
-        arch1 = open("middleware/horarios.csv")
-        linea1 = arch1.readline().strip()
-        while linea1!="":
-            partes = linea1.split(",")
-            self.cursor.execute(q["horario"]["insert"].replace('x',partes[0]).replace('y',partes[1]).replace('z',partes[2]))
-            linea1 = arch1.readline().strip()
-        self.conn.commit()
-
-    def getAccess(self):
-        return self.access
 
     def close(self):
         if self.cursor is not None:

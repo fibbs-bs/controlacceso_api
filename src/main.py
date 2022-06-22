@@ -1,5 +1,6 @@
 from middleware.SQLiteConnection import SQLiteConnection
-from interface.glue import dailyExecution
+import interface.glue as glue
+import middleware.TongoyAPI as t
 
 
 if __name__ == '__main__':
@@ -20,4 +21,4 @@ if __name__ == '__main__':
     #print(result)
     pgCon.close()
     """
-    if not dailyExecution(): print("Oh no")
+    print(glue.getAccess('25BEFBC2',3))#Pineda sala de código 3
