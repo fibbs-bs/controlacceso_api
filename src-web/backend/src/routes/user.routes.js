@@ -9,7 +9,7 @@ router.get(
     "/getHistorialAcceso",
     authCtrl.getHistorialAcceso
 );
-
+router.get('/getHistorial',authCtrl.getHistorial);
 
 
 

@@ -1,8 +1,10 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import axios from 'axios';
 import { makeStyles, Button, TextField, Table, TableContainer, TableHead, TableCell, TableBody, TableRow, } from '@material-ui/core';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import BackdropFilter from "react-backdrop-filter";
+import { useAuth } from '../../Context/AuthContext';
 
 const useStyles = makeStyles ((theme) => ({
     icons: {
@@ -38,6 +40,28 @@ const useStyles = makeStyles ((theme) => ({
 
 export default function HistorialSalas(){
     const classes = useStyles ()
+    const [data, setData] = useState ([])
+    const [error, setError] = useState ('');
+    const { logout } = useAuth(); //esta funcion viene de /context/AuthContext
+
+    const getHistorial = async() =>{
+        await axios.get('http://localhost:4000/api/getHistorial')
+        .then(response =>{
+            setData(response.data)
+        })
+    }
+    useEffect(() => {
+        getHistorial()
+    },[])
+
+    const handleLogout = async () => {
+        try{
+            await logout();
+        } catch (error){ 
+            setError('Server Error')
+        }
+    }
+
 
     return(
       
@@ -47,6 +71,7 @@ export default function HistorialSalas(){
                     className= {classes.button}
                     type = "button"
                     variant = 'contained'
+                    onClick = {handleLogout}
                 >
                     Logout
                 </Button>
@@ -62,10 +87,8 @@ export default function HistorialSalas(){
                     }
                     }}
                 color = 'contrastText'
-                //backgroundColor = '#D8F3DC'
+                
                 mx = {25} //margen a todos los lados
-                //p = {30} //padding
-                //borderRadius = '8px'
                 border = {1}
                 borderColor = '#adc178'
                 marginTop = {'30px'}
@@ -82,7 +105,7 @@ export default function HistorialSalas(){
                 >
                     <h2>Historial de Accesos</h2>
                     <TableContainer>
-                        <Table  sx = {{ minWidth: 650 }} id = 'tables'>
+                        <Table  id = 'tables'>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align = 'center'>Sala</TableCell>
@@ -92,6 +115,17 @@ export default function HistorialSalas(){
                                     <TableCell align = 'center'>Fecha Termino</TableCell>
                                 </TableRow>
                             </TableHead>
+                            <TableBody>
+                                {data.map(historial => (
+                                    <TableRow sx={{ '&:last-child td, &:last-child th': {border: 0}}}>
+                                        <TableCell align = 'center'>{historial.sala}</TableCell>
+                                        <TableCell align = 'center'>{historial.rut_usuario}</TableCell>
+                                        <TableCell align = 'center'>{historial.bloque}</TableCell>
+                                        <TableCell align = 'center'>{historial.fecha_inicio}</TableCell>
+                                        <TableCell align = 'center'>{historial.fecha_fin}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
                         </Table>
                     </TableContainer>
                 </BackdropFilter>
