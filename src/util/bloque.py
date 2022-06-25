@@ -12,6 +12,10 @@ bloques = { #contiene horas (datetime.time) de cada bloque
     'F':  [datetime.strptime('17:45','%H:%M').time(),datetime.strptime('19:30','%H:%M').time()],
     'G':  [datetime.strptime('19:30','%H:%M').time(),datetime.strptime('21:15','%H:%M').time()],
 }
+dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"]
+
+def now():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def getCurrentBlock():
     now = datetime.now().time()
@@ -31,3 +35,6 @@ def getCurrentDoW():
 
 def getCurrentDoW_():
     return date.today().strftime('%A')[0:2]
+
+def getDiaSemana():
+    return dias[datetime.today().isoweekday()-1]

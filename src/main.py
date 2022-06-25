@@ -1,8 +1,8 @@
 import interface.glue as glue
 
-codigoSala = 42
+codigoSala = 353
 
 if __name__ == '__main__':
-    cardUid = '25BEFBC2'
-    #print(glue.getAccess(cardUid,codigoSala)) #Pineda sala de código 42
-    glue.dailyExecution()
+    #cardUid = '25BEFBC2'#Pineda
+    cardUid = '25BEFBC3'#Profe de rut 93370783
+    print(glue.getAccess(cardUid,codigoSala))

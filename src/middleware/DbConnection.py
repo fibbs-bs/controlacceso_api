@@ -47,6 +47,10 @@ class DbConnection(object):
     def getPersonas(self):
         data = self.doGet("select rut,uid from persona")
         return dict(zip([item[0] for item in data],[item[1] for item in data]))
+    def getRegistros(self):
+        return self.doGet("select * from registro")
+    def delRegistros(self):
+        self.do("delete from registro")
     def getPlanificacion(self):
         data = self.doGet("select * from planificacion where bloque like '{}%'".format(bloques.getCurrentDoW_()))
         return dict(zip([item[0] for item in data],[(item[1],item[2]) for item in data]))
@@ -64,14 +68,16 @@ class DbConnection(object):
         self.cursor.execute("select rut from persona where uid = '{}'".format(uid))
         data = self.cursor.fetchone()
         self.cursor.close()
-        if data[0] != '':
+        if data is None:
+            return None
+        elif data[0] != '':
             return data[0]
         else:
             return None
 
-    def insert(self,table,A,B,C,D):
+    def insert(self,table,A,B,C,D,E,F):
         self.cursor = self.conn.cursor()
-        self.cursor.execute(q[table]['insert'].format(A,B,C,D))
+        self.cursor.execute(q[table]['insert'].format(A,B,C,D,E,F))
         self.conn.commit()
 
     def delete(self,table,A,B,C,D):

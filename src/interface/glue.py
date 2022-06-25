@@ -4,6 +4,22 @@ import middleware.TongoyAPI as TongoyAPI
 import util.bloque as bloques
 import pandas as pd
 
+def registrarAcceso(liteCon,rut,sala,acceso):
+    dow = bloques.getDiaSemana()
+    bloque = bloques.getCurrentBlock()
+    cuando = bloques.now()
+    pgCon = PgConnection()
+    if pgCon.access:
+        try:
+            pgCon.insert("registro",rut,dow,bloque,sala,cuando,acceso)
+        finally:
+            pgCon.close()
+            print(rut,sala,acceso)
+    else:
+        liteCon.insert("registro",rut,dow,bloque,sala,cuando,acceso)
+        liteCon.close()
+        print(rut,sala,acceso)
+
 def dailyPersona(liteConn,pgConn,tongoyFrame):
     tongoyUniqueRuts = tongoyFrame['rut'].unique()
     litePersonaDict = liteConn.getPersonas() #genera un dict key=rut,value=uid
@@ -11,22 +27,23 @@ def dailyPersona(liteConn,pgConn,tongoyFrame):
     for rutTongoy in tongoyUniqueRuts:
         #Si el rut de tongoy no está en Postgres, se agrega a Postgres
         if rutTongoy not in list(pgPersonaDict.keys()):
-            pgConn.insert('persona',rutTongoy,'','','')
+            pgConn.insert('persona',rutTongoy,'','','','','')
         #Si el rut de tongoy no está en SQLite, se agrega a SQLite
         if rutTongoy not in list(litePersonaDict.keys()):
-            liteConn.insert('persona',rutTongoy,'','','')
+            liteConn.insert('persona',rutTongoy,'','','','','')
     for rutPg in list(pgPersonaDict.keys()):
         #Si el rut de Postgres no está en SQLite, se agrega a SQLite
         if rutPg not in list(litePersonaDict.keys()):
             try:
-                liteConn.insert('persona',rutPg,'','','')
+                liteConn.insert('persona',rutPg,'','','','','')
             except:
                 #Si entra acá es porque se agrego este rut en el for anterior y lanzaría un UNIQUE constraint en SQLite
                 pass
 
 def do():
     lite = SQLiteConnection()
-    print(lite.doGet("select * from acceso"))
+    lite.do('drop table registro')
+    lite.do("create table registro(rut text, dow text,bloque varchar(2),sala int, cuando timestamp,acceso varchar(2))")
     lite.close()
 
 def format(string):
@@ -48,17 +65,25 @@ def dailyPlanificacion(liteConn: SQLiteConnection,pgConn: PgConnection,tongoyFra
     lite = liteConn.getPlanificacion()
     try:
         pg = pgConn.getPlanificacion()
+        registrosLite = liteConn.getRegistros()
+        if len(registrosLite)>0:
+            try:
+                for reg in registrosLite:
+                    pgConn.insert("registro",reg['rut'],reg['dow'],reg['bloque'],reg['sala'],reg['cuando'],'')
+                pgConn.delRegistros()
+            except:
+                pass    
     except Exception as e:
         print(e)
     for id in list(tongoy.keys()):
         if id not in list(lite.keys()):
             try:
-                liteConn.insert('planificacion',id,tongoy[id][0],tongoy[id][1],'')
+                liteConn.insert('planificacion',id,tongoy[id][0],tongoy[id][1],'','','')
             except:
                 pass
         if id not in list(pg.keys()):
             try:
-                pgConn.insert('planificacion',id,tongoy[id][0],tongoy[id][1],'')
+                pgConn.insert('planificacion',id,tongoy[id][0],tongoy[id][1],'','','')
             except:
                 pass
     for id in list(lite.keys()):
@@ -86,13 +111,13 @@ def dailyAcceso(liteConn: SQLiteConnection,pgConn: PgConnection,tongoyFrame: pd.
     for id in list(tongoy.keys()):
         if id not in lite:
             try:
-                liteConn.insert('acceso',id,id.replace(tongoy[id],''),tongoy[id],'')
+                liteConn.insert('acceso',id,id.replace(tongoy[id],''),tongoy[id],'','','')
             except Exception as e:
                 print(e,'lite')
                 pass
         if id not in pg:
             try:
-                pgConn.insert('acceso',id,id.replace(tongoy[id],''),tongoy[id],'')
+                pgConn.insert('acceso',id,id.replace(tongoy[id],''),tongoy[id],'','','')
             except Exception as e:
                 print(e,'pg')
                 pass
@@ -141,6 +166,11 @@ def dailyExecution():
             liteConn.close()
             pgConn.close()
         except Exception as e:
+            try:
+                liteConn.close()
+                pgConn.close()
+            except:
+                pass
             print(e)
             return
 
@@ -161,7 +191,9 @@ def getAccess(uid,sala):
             result = [tupla for tupla in TongoyAPI.get() if (tupla['rut']==rut)]
             for tupla in result:
                 if tupla['id'] == sala and tupla['bloque']==bloques.getCurrentBlock():
+                    registrarAcceso(liteConn,rut,sala,'Si')
                     return 200
+            registrarAcceso(liteConn,rut,sala,'No')
             return 404
         #Si lanza error significa que no posee conexión a Tongoy, por lo que tocará revisar en SQLite
         #para comprobar el último backup realizado.
@@ -169,16 +201,15 @@ def getAccess(uid,sala):
             try:
                 dbRut = liteConn.selectUID(uid,bloques.getCurrentBlockAndDay(),sala)
                 if dbRut is None:
+                    registrarAcceso(liteConn,rut,sala,'No')
                     return 404
                 else:
+                    registrarAcceso(liteConn,rut,sala,'Si')
                     return 200
             except:
-                return 500
-            finally:
                 liteConn.close()
-        finally:
-            liteConn.close()
+                return 500
     else:
-        liteConn.close()
         #No autorizado ya que su CARD-UID no está enrolado
+        registrarAcceso(liteConn,'Null (UID:'+uid+')',sala,'No')
         return 401
