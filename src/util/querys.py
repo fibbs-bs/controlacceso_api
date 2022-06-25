@@ -1,26 +1,30 @@
 queryset = {
     "sala": {
-        'create': '',
+        'select': 'select * from sala',
         "getNombre": "select nombre from sala where codigo = X",
-        "getAll": "select * from sala",
         "insert": "insert into sala values (x,y)"
     },
     "horario": {
-        "insert": "insert into horario values (x,y,z)"
+        "insert": "insert into horario values (x,y,z)",
+        "select": "select * from horario"
     }
     ,
     "planificacion":{
-        'create':'create table planificacion(id text primary key,bloque_horario varchar(4) not null,codigo_sala int not null,foreign key (bloque_horario) references horario(bloque),foreign key (codigo_sala) references sala(codigo));',
-        "insert":"insert into planificacion (id,bloque_horario,codigo_sala) values ('XY','X',Y)",
-        "delete":"delete from planificacion where bloque_horario = 'X'"
+        'create':'create table planificacion(id text primary key,bloque varchar(4) not null,sala int not null,foreign key (bloque) references horario(bloque));',
+        "select":"select * from planificacion",
+        "insert":"insert into planificacion (id,bloque,sala) values ('{}','{}',{}){}",
+        "delete":"delete from planificacion where id = '{}'{}{}{}"
     },
     "persona":{
-        "create":"create table persona(rut text primary key,uid text);"
+        "create":"create table persona(rut text primary key,uid text);",
+        "select":"select * from persona",
+        "insert":"insert into persona (rut,uid) values ('{}','{}'){}{}"
     },
     "acceso":{
-        'create':'create table acceso(id serial primary key,id_planificacion text not null,rut_persona text not null,foreign key (id_planificacion) references planificacion(id) on delete cascade);',
-        'insertP':"insert into acceso (id_planificacion,rut_persona) values ('X','Y')",
-        'insertQ':"insert into acceso (id_planificacion,rut_persona)) values ('X',(select rut from persona where uid = 'Y'))",
-        'select':"select uid "
+        'create':'create table acceso(id text primary key,id_planificacion text not null,rut text not null,foreign key (id_planificacion) references planificacion(id) on delete cascade,foreign key (rut) references persona(rut));',
+        'insert':"insert into acceso values ('{}','{}','{}'){}",
+        'delete':"delete from acceso where id = '{}'{}{}{}",
+        'checkAccess':"select rut from acceso inner join persona on acceso.rut_persona = persona.rut inner join planificacion on planificacion.id = acceso.id_planificacion where persona.uid = '{}' and planificacion.bloque_horario = '{}' and planificacion.codigo_sala = {};",
+        'select':"select * from acceso"
     }
 }

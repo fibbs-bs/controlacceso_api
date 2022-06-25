@@ -11,4 +11,5 @@ class PgConnection(DbConnection):
             self.conn = psycopg.connect(**conn_dict)
             self.access = True
         except:
+            print('error')
             self.access = False
