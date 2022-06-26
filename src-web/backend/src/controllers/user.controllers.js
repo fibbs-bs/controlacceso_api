@@ -76,7 +76,7 @@ authCtrl.registrarUsuario = async function (req,res){
         text: 'Wooohooo it works!!',
         attachments: [{
             filename: 'logo.png',
-            path: 'D:/Documents/GitHub/controlacceso_api/src-web/backend/images/logo.png'
+            path: './images/logo.png'
         }]
     };
 
@@ -88,7 +88,7 @@ authCtrl.registrarUsuario = async function (req,res){
                 msg: "No existe un usuario con ese rut."
             });
             return log('Error occurs');
-            
+
         }
         res.status(200).json({
             msg: "email enviado"
