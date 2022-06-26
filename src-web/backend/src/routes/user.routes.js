@@ -9,6 +9,12 @@ router.get(
     "/getHistorialAcceso",
     authCtrl.getHistorialAcceso
 );
+
+router.post(
+    "/registrarUsuario",
+    authCtrl.registrarUsuario
+);
+
 router.get('/getHistorial',authCtrl.getHistorial);
 
 
