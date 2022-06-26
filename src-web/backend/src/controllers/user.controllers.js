@@ -62,26 +62,23 @@ authCtrl.registrarUsuario = async function (req,res){
     let transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.EMAIL, // TODO: your gmail account 
+            user: process.env.EMAIL, // TODO: your gmail account
             pass: process.env.PASSWORD // TODO: your gmail password
         },
         port: 485
-     
-    
-    });    
+    });
 
     // Step 2
     let mailOptions = {
         from: process.env.EMAIL, // TODO: email sender
         to: correo, // TODO: email receiver
-        subject: 'QR Acceso',
-        text: 'Estimado(a), se adjunta el codigo QR de acceso',
-        html:'<b>Typo-o</b><p>Hi! '+'</p><p>Your verification code is: <b>'+ran+'</b></p><p>Please put this code in the CODE box.</p>',
-        text: '<b>Typo-o</b><p>Hi! '+'</p><p>Your verification code is: <b>'+ran+'</b></p><p>Please put this code in the CODE box.</p>',
-        //attachments: [
-         //   { filename: 'logo.png', path: 'controlacceso_api/src-web/backend/images/logo.png' } // TODO: replace it with your own image
-        //]
-    };   
+        subject: 'Nodemailer - Test',
+        text: 'Wooohooo it works!!',
+        attachments: [{
+            filename: 'logo.png',
+            path: 'D:/Documents/GitHub/controlacceso_api/src-web/backend/images/logo.png'
+        }]
+    };
 
 
     // Step 3
