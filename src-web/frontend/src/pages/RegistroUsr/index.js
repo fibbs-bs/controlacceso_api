@@ -78,7 +78,15 @@ export default function Login() {
             }))
         }
     }
-    console.log(regUsr)
+    
+    const mostrarAlerta = () =>{
+        swal({
+            title:'Registrado',
+            text:'Se ha registrado correctamente',
+            icon:'success'
+        })
+    }
+
     return (
         <div>
             
@@ -126,14 +134,16 @@ export default function Login() {
                                 required
                                 autoFocus //enfocado en input de usuario
                                 label = 'Correo'    
+                                type = 'email'
                                 onChange={handleChange}   
                             />
                             <br  /><br />   
                             <Button 
                                 className = {classes.button}
-                                type = 'submit'
+                                //type = 'submit'
                                 variant = 'contained'
                                 fullWidth
+                                onClick={() => mostrarAlerta()}
                             >
                                 Registrarse
                             </Button>  

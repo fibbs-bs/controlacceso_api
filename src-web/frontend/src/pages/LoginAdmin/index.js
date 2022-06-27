@@ -80,7 +80,7 @@ export default function Login() {
         try{
             await login(email, password)
             // navigate nos envia a home luego de iniciar sesion validamente
-            navigate('/histrialAcessos') 
+            navigate('/historialAccesos') 
         }catch (error){
             //setError('Datos incorrectos');
             swal({

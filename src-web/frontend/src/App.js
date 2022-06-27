@@ -12,9 +12,9 @@ function App() {
           <Route path = '/' element = {<RegistrosUsuarios/>}/>
           <Route path = 'loginAdmin' element = {<LoginAdmin/>}/>
           <Route element = {<PrivateRoute/>}>
-            
+            <Route exact path = 'historialAccesos' element = {<HistorialAccesos/>}/>
           </Route>
-          <Route exact path = 'historialAccesos' element = {<HistorialAccesos/>}/>
+          
         </Routes>
       </Router>
     </AuthProvider>
