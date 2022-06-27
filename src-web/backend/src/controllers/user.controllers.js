@@ -1,4 +1,4 @@
-const { json } = require('body-parser');
+const { json, text } = require('body-parser');
 const db = require ('../middleware/connection')
 const bcrypt = require("bcryptjs");
 const nodemailer = require('nodemailer');
@@ -53,51 +53,126 @@ authCtrl.registrarUsuario = async function (req,res){
     rut = req.body.rut;
     correo= req.body.correo;
 
-    const nodemailer = require('nodemailer');
-    const log = console.log;
-    const ran = 2;
-    require('dotenv').config();
-
-    // Step 1
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.EMAIL, // TODO: your gmail account
-            pass: process.env.PASSWORD // TODO: your gmail password
-        },
-        port: 485
-    });
-
-    // Step 2
-    let mailOptions = {
-        from: process.env.EMAIL, // TODO: email sender
-        to: correo, // TODO: email receiver
-        subject: 'Nodemailer - Test',
-        text: 'Wooohooo it works!!',
-        attachments: [{
-            filename: 'logo.png',
-            path: './images/logo.png'
-        }]
-    };
-
-
-    // Step 3
-    transporter.sendMail(mailOptions, (err, data) => {
-        if (err) {
-            res.status(404).json({
-                msg: "No existe un usuario con ese rut."
-            });
-            return log('Error occurs');
-
-        }
+    await db.query(
+        `INSERT INTO persona(rut,nombre,correo)
+            VALUES ($1,$2,$3)`,[rut,nombre,correo]
+    ).then(()=>{
         res.status(200).json({
-            msg: "email enviado"
+            msg: "Registro correcto de usuario."
         })
-        return log('Email sent!!!');
-    });
+        const nodemailer = require('nodemailer');
+        const log = console.log;
+        require('dotenv').config();
+        const QRCode = require('qrcode')
+
+        const generateQR = async text => {
+            try{
+                await QRCode.toFile('./images/QRAcceso.png', text);
+            } catch(err){
+                console.error(err)
+            }
+        }
+
+        generateQR("ACS-"+rut)
+
+        // Step 1
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL, // TODO: your gmail account
+                pass: process.env.PASSWORD // TODO: your gmail password
+            },
+            port: 485
+        });
+
+        // Step 2
+        let mailOptions = {
+            from: process.env.EMAIL, // TODO: email sender
+            to: correo, // TODO: email receiver
+            subject: 'QR Acceso salas',
+            text: 'Gracias'+nombre+'por registrarte en Acceso Salas UCN!!!,\na continuación se le adjunta su codigo QR para el acceso a las salas',
+            attachments: [{
+                filename: 'QRAcceso.png',
+                path: './images/QRAcceso.png'
+            }]
+        };
 
 
+        // Step 3
+        transporter.sendMail(mailOptions, (err, data) => {
+            if (err) {
+                res.status(404).json({
+                    msg: "No existe un usuario con ese rut."
+                });
+                return log('Error occurs');
 
+            }
+            res.status(200).json({
+                msg: "email enviado"
+            })
+            return log('Email sent!!!');
+        });
+    })
+    .catch((err)=>{
+        if (err.constraint=="persona_pkey"){
+            res.status(406).json({msg:"Rut ya registrado."})
+            const nodemailer = require('nodemailer');
+            const log = console.log;
+            require('dotenv').config();
+            const QRCode = require('qrcode')
+
+            const generateQR = async text => {
+                try{
+                    await QRCode.toFile('./images/QRAcceso.png', text);
+                } catch(err){
+                    console.error(err)
+                }
+            }
+
+            generateQR("ACS-"+rut)
+
+            // Step 1
+            let transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL, // TODO: your gmail account
+                    pass: process.env.PASSWORD // TODO: your gmail password
+                },
+                port: 485
+            });
+
+            // Step 2
+            let mailOptions = {
+                from: process.env.EMAIL, // TODO: email sender
+                to: correo, // TODO: email receiver
+                subject: 'QR Acceso salas',
+                text: 'Gracias'+nombre+'por registrarte en Acceso Salas UCN!!!,\na continuación se le adjunta su codigo QR para el acceso a las salas',
+                attachments: [{
+                    filename: 'QRAcceso.png',
+                    path: './images/QRAcceso.png'
+                }]
+            };
+
+
+            // Step 3
+            transporter.sendMail(mailOptions, (err, data) => {
+                if (err) {
+                    res.status(404).json({
+                        msg: "No existe un usuario con ese rut."
+                    });
+                    return log('Error occurs');
+
+                }
+                res.status(200).json({
+                    msg: "email enviado"
+                })
+                return log('Email sent!!!');
+            });
+        }
+        else{
+            res.status(500).json({msg:"Error en el ingreso de datos."})
+        }
+    })
 };
 
 
