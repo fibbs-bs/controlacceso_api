@@ -18,7 +18,8 @@ queryset = {
     "persona":{
         "create":"create table persona(rut text primary key,uid text);",
         "select":"select * from persona",
-        "insert":"insert into persona (rut,uid) values ('{}','{}'){}{}{}{}"
+        "insert":"insert into persona (rut,uid) values ('{}','{}'){}{}{}{}",
+        "update":"update persona set uid='{}' where rut='{}'"
     },
     "acceso":{
         'create':'create table acceso(id text primary key,id_planificacion text not null,rut text not null,foreign key (id_planificacion) references planificacion(id) on delete cascade,foreign key (rut) references persona(rut));',

@@ -80,6 +80,12 @@ class DbConnection(object):
         self.cursor.execute(q[table]['insert'].format(A,B,C,D,E,F))
         self.conn.commit()
 
+    def update(self,table,a):
+        self.cursor = self.conn.cursor()
+        self.cursor.execute(q[table]['update'].format(a))
+        self.conn.commit()
+        self.close()
+
     def delete(self,table,A,B,C,D):
         self.cursor = self.conn.cursor()
         self.cursor.execute(q[table]['delete'].format(A,B,C,D))

@@ -132,9 +132,6 @@ def dailyAcceso(liteConn: SQLiteConnection,pgConn: PgConnection,tongoyFrame: pd.
                 print(e)
                 pass
 
-
-
-
 #Obtiene los datos desde Tongoy y los carga en PostgreSQL y SQLite
 def dailyExecution():
     # Hacer key de diccionario los id de los datos, y value los siguientes datos en formato list
@@ -213,3 +210,13 @@ def getAccess(uid,sala):
         #No autorizado ya que su CARD-UID no está enrolado
         registrarAcceso(liteConn,'Null (UID:'+uid+')',sala,'No')
         return 401
+
+def registrarUID(rut,uid):
+    liteConn = SQLiteConnection()
+    pgConn = PgConnection()
+    try:
+        liteConn.update('persona',uid,rut)
+        pgConn.update('persona',uid,rut)
+        return 200
+    except:
+        return 500
