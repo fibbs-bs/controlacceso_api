@@ -81,21 +81,13 @@ export default function Login() {
             }))
         }
     }
+    
 
     const registroUsuario = async () =>{
-        await axios.post('http://localhost:4000/api/registrarUsuario'+ regUsr)
+        console.log(regUsr)
+        await axios.post('http://localhost:4000/api/registrarUsuario',regUsr)
         .then(response =>{
             console.log(response)
-            if (response === 200){
-                console.log('Usuario Registrado!')
-                mostrarAlerta()
-            }
-            else if (response === 404){
-                console.log('no existe usuario con este rut')
-            }
-            else{
-                console.log("Error!!")
-            }
         })
     }
     
