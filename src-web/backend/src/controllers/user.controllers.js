@@ -90,10 +90,11 @@ authCtrl.registrarUsuario = async function (req,res){
             from: process.env.EMAIL, // TODO: email sender
             to: correo, // TODO: email receiver
             subject: 'QR Acceso salas',
-            text: 'Gracias'+nombre+'por registrarte en Acceso Salas UCN!!!,\na continuación se le adjunta su codigo QR para el acceso a las salas',
+            html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.\nA continuación se le adjunta su codigo QR para el acceso a las salas\n<img src="cid:qr"/>',
             attachments: [{
                 filename: 'QRAcceso.png',
-                path: './images/QRAcceso.png'
+                path: './images/QRAcceso.png',
+                cid: 'qr'
             }]
         };
 
