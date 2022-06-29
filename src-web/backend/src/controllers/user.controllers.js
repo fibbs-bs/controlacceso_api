@@ -90,7 +90,7 @@ authCtrl.registrarUsuario = async function (req,res){
             from: process.env.EMAIL, // TODO: email sender
             to: correo, // TODO: email receiver
             subject: 'QR Acceso salas',
-            html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el acceso a las salas<br><br><img src="cid:qr"/><br><br><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul>',
+            html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el acceso a las salas<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul>',
             attachments: [{
                 filename: 'QRAcceso.png',
                 path: './images/QRAcceso.png',
@@ -147,7 +147,7 @@ authCtrl.registrarUsuario = async function (req,res){
                 from: process.env.EMAIL, // TODO: email sender
                 to: correo, // TODO: email receiver
                 subject: 'QR Acceso salas',
-                html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el acceso a las salas<br><br><img src="cid:qr"/><br><br><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul>',
+                html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el acceso a las salas<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul>',
                 attachments: [{
                     filename: 'QRAcceso.png',
                     path: './images/QRAcceso.png',
