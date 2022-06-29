@@ -87,19 +87,46 @@ export default function Login() {
         console.log(regUsr)
         await axios.post('http://localhost:4000/api/registrarUsuario',regUsr)
         .then(response =>{
-            console.log(response)
+            console.log(response.status)
+            if (response.status === 200){
+                mostrarAlertaRegistroCorrecto()
+            }
+
+        })
+        .catch(error => {
+            console.log(error.request.status)
+            if (error.request.status === 406){
+                console.log("Usuario ya registrado")
+                mostrarAlertaUsuarioRegistrado()
+            }
+            else{
+                mostrarServerError()
+            }
         })
     }
     
     
-    const mostrarAlerta = () =>{
+    const mostrarAlertaRegistroCorrecto = () =>{
         swal({
-            title:'Registrado',
-            text:'Se ha registrado correctamente',
+            title:'Registrado correctamente!',
             icon:'success'
         })
     }
 
+    const mostrarAlertaUsuarioRegistrado = () =>{
+        swal({
+            title:'Usuario ya registrado',
+            text:'Rut del usuario ya estaba en nuestra base de datos',
+            icon:'warning'
+        })
+    }
+
+    const mostrarServerError = () => {
+        swal({
+            title: 'SERVER ERROR',
+            icon: 'error'
+        })
+    }
     return (
         <div>
             
