@@ -6,6 +6,7 @@ import { useAuth } from '../../Context/AuthContext'
 import { Link, } from 'react-router-dom'
 import { ListItemText } from '@mui/material'
 import swal from 'sweetalert'
+import axios from 'axios';
 
 
 const useStyles = makeStyles(theme=>({
@@ -61,8 +62,10 @@ const useStyles = makeStyles(theme=>({
 
 }))
 
+
 export default function Login() {
     const classes = useStyles ()
+    const [data, setData] = useState ([])
     const [regUsr, setRegUsr] = useState({
         nombre:'',
         rut:'',
@@ -78,6 +81,24 @@ export default function Login() {
             }))
         }
     }
+
+    const registroUsuario = async () =>{
+        await axios.post('http://localhost:4000/api/registrarUsuario'+ regUsr)
+        .then(response =>{
+            console.log(response)
+            if (response === 200){
+                console.log('Usuario Registrado!')
+                mostrarAlerta()
+            }
+            else if (response === 404){
+                console.log('no existe usuario con este rut')
+            }
+            else{
+                console.log("Error!!")
+            }
+        })
+    }
+    
     
     const mostrarAlerta = () =>{
         swal({
@@ -143,7 +164,7 @@ export default function Login() {
                                 //type = 'submit'
                                 variant = 'contained'
                                 fullWidth
-                                onClick={() => mostrarAlerta()}
+                                onClick={() => registroUsuario()}
                             >
                                 Registrarse
                             </Button>  
@@ -152,6 +173,7 @@ export default function Login() {
                                     className= {classes.button}
                                     variant = 'contained'
                                     fullWidth
+                                    
                                 >
                                     Soy un administrador
                                 </Button>
