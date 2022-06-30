@@ -117,6 +117,17 @@ authCtrl.registrarUsuario = async function (req,res){
     .catch((err)=>{
         if (err.constraint=="persona_pkey"){
             res.status(406).json({msg:"Rut ya registrado."})
+
+            updatedb = async function(){
+                await db.query(
+                    `update persona set nombre = $1,
+                    correo =$2
+                    where rut = $3`,[nombre,correo,rut]
+                )
+            }
+            updatedb();
+            
+
             const nodemailer = require('nodemailer');
             const log = console.log;
             require('dotenv').config();
