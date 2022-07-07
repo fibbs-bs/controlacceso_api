@@ -15,6 +15,13 @@ router.post(
     authCtrl.registrarUsuario
 );
 
+router.post(
+    "/delAcceso",
+    authCtrl.eliminarAcceso
+);
+
+
+
 router.get('/getHistorial',authCtrl.getHistorial);
 
 

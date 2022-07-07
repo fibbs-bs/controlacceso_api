@@ -189,7 +189,43 @@ authCtrl.registrarUsuario = async function (req,res){
 };
 
 
+authCtrl.eliminarAcceso = async function (req,res){
+    rut = req.body.rut;
+    bloque = req.body.bloque;
+    sala = req.body.sala;
 
+    await db.query(
+        `select rut from acceso where rut = $1 and id_planificacion = (select id from planificacion where bloque = $2 and sala= $3)`,[rut,bloque,sala]
+    ).then((data)=>{
+        if (data.rowCount==0){
+            res.status(404).json({
+                msg: "No existe un usuario con ese rut."
+            })
+        }
+        else{
+            eliminacion = async function (){
+                await db.query(
+                    `delete from acceso where rut = $1 and id_planificacion = (select id from planificacion where bloque = $2 and sala= $3)`,[rut,bloque,sala]
+                ).then((data)=>{
+                    res.status(200).json({
+                        msg: "Done"
+                    })
+                }).catch((err)=>{
+                    res.status(500).json({
+                        err,
+                        msg: "Error interno en el servidor."
+                    })
+                })
+            }
+            eliminacion();
+        }
+    }).catch((err)=>{
+        res.status(500).json({
+            err,
+            msg: "Error interno en el servidor."
+        })
+    })
+}
 
 
 
