@@ -19,6 +19,7 @@ authCtrl.getHistorial = async (req,res) => {
     })
     .catch((e)=>console.log(e))
 }
+
 authCtrl.getHistorialAcceso = async function (req,res) {
     await db.query(
         `select t.nombre as sala, m.rut as rut_usuario,
@@ -45,6 +46,80 @@ authCtrl.getHistorialAcceso = async function (req,res) {
         })
     })
 };
+
+
+authCtrl.getRuts = async function (req,res) {
+    await db.query(
+        `select p.rut from persona p`
+    ).then((data)=>{
+        if (data.rowCount==0){
+            res.status(404).json({
+                msg: "No se encontraron personas."
+            })
+        }
+        else{
+            console.log(data.rows)
+            res.status(200).json({
+                data:data.rows
+            })
+        }
+    }).catch((err)=>{
+        res.status(500).json({
+            err,
+            msg: "Error en la obtención de datos."
+        })
+    })
+};
+
+
+authCtrl.getBloques = async function (req,res) {
+    await db.query(
+        `select p.bloque from planificacion p`
+    ).then((data)=>{
+        if (data.rowCount==0){
+            res.status(404).json({
+                msg: "No se encontraron personas."
+            })
+        }
+        else{
+            console.log(data.rows)
+            res.status(200).json({
+                data:data.rows
+            })
+        }
+    }).catch((err)=>{
+        res.status(500).json({
+            err,
+            msg: "Error en la obtención de datos."
+        })
+    })
+};
+
+
+authCtrl.getSalas = async function (req,res) {
+    await db.query(
+        `select distinct p.sala, m.nombre as nombre_sala from planificacion p
+        inner join sala m on (m.codigo = p.sala)`
+    ).then((data)=>{
+        if (data.rowCount==0){
+            res.status(404).json({
+                msg: "No se encontraron personas."
+            })
+        }
+        else{
+            console.log(data.rows)
+            res.status(200).json({
+                data:data.rows
+            })
+        }
+    }).catch((err)=>{
+        res.status(500).json({
+            err,
+            msg: "Error en la obtención de datos."
+        })
+    })
+};
+
 
 
 authCtrl.registrarUsuario = async function (req,res){
@@ -208,7 +283,7 @@ authCtrl.eliminarAcceso = async function (req,res){
                     `delete from acceso where rut = $1 and id_planificacion = (select id from planificacion where bloque = $2 and sala= $3)`,[rut,bloque,sala]
                 ).then((data)=>{
                     res.status(200).json({
-                        msg: "Done"
+                        msg: "Acceso eliminado"
                     })
                 }).catch((err)=>{
                     res.status(500).json({
@@ -227,6 +302,59 @@ authCtrl.eliminarAcceso = async function (req,res){
     })
 }
 
+
+
+authCtrl.generarAcceso = async function (req,res){
+    rut = req.body.rut;
+    bloque = req.body.bloque;
+    sala = req.body.sala;
+
+    await db.query(
+        `select rut from acceso where rut = $1 and id_planificacion = (select id from planificacion where bloque = $2 and sala= $3)`,[rut,bloque,sala]
+    ).then((data)=>{
+        if (data.rowCount!=0){
+            res.status(404).json({
+                msg: "Este usuario ya tiene acceso a esa sala y bloque."
+            })
+        }
+        else{
+            insercion = async function (){
+
+                var bloquesep=bloque.split('')
+                var bloqueord=bloquesep[3]+bloquesep[0]+bloquesep[1]
+                var bloquemay=bloqueord.toUpperCase()
+
+                var ceros = '0000'
+                var salaceros= `${sala}${ceros} `
+
+                var salacerocutfinal= salaceros.substring(0,4)
+
+                var id_plan= `${bloquemay}${salacerocutfinal}`
+                var id=`${id_plan}${rut}`
+
+                await db.query(
+                    `insert into acceso (id,id_planificacion,rut)
+                    values($1,$2,$3)`,[id,id_plan,rut]
+                ).then((data)=>{
+                    res.status(200).json({
+                        msg: "Acceso generado"
+                    })
+                }).catch((err)=>{
+                    res.status(500).json({
+                        err,
+                        msg: "Error interno en el servidor."
+                    })
+                })
+            }
+            insercion();
+        }
+    }).catch((err)=>{
+        res.status(500).json({
+            err,
+            msg: "Error interno en el servidor."
+        })
+    })
+}
 
 
 
