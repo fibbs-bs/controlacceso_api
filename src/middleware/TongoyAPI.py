@@ -11,6 +11,3 @@ def get():
             return None
     except:
         return None
-
-
-print(get())
