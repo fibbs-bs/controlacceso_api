@@ -274,7 +274,7 @@ authCtrl.eliminarAcceso = async function (req,res){
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({
-                msg: "No existe un usuario con ese rut."
+                msg: "No existe dicho acceso-usuario"
             })
         }
         else{
