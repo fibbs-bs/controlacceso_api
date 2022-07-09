@@ -50,7 +50,7 @@ authCtrl.getHistorialAcceso = async function (req,res) {
 
 authCtrl.getRuts = async function (req,res) {
     await db.query(
-        `select p.rut from persona p`
+        `select rut from persona where uid is not NULL and uid != ''`
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({
