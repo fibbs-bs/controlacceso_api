@@ -25,7 +25,7 @@ queryset = {
         'create':'create table acceso(id text primary key,id_planificacion text not null,rut text not null,foreign key (id_planificacion) references planificacion(id) on delete cascade,foreign key (rut) references persona(rut));',
         'insert':"insert into acceso values ('{}','{}','{}'){}{}{}",
         'delete':"delete from acceso where id = '{}'{}{}{}",
-        'checkAccess':"select rut from acceso inner join persona on acceso.rut_persona = persona.rut inner join planificacion on planificacion.id = acceso.id_planificacion where persona.uid = '{}' and planificacion.bloque_horario = '{}' and planificacion.codigo_sala = {};",
+        'checkAccess':"select planificacion.bloque,sala,persona.rut from acceso inner join persona on acceso.rut = persona.rut inner join planificacion on planificacion.id = acceso.id_planificacion where persona.uid = '{}' and planificacion.bloque = '{}' and sala = {}",
         'select':"select * from acceso"
     },
     "registro":{

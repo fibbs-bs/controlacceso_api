@@ -16,10 +16,7 @@ class DbConnection(object):
 
     def selectUID(self,uid:str,bloque:str,sala:int) -> str or None:
         self.cursor = self.conn.cursor()
-        if self.__class__.__name__ == "PgConnection":
-            self.cursor.execute("select getAccess('{}','{}',{})".format(uid,bloque,sala))
-        else:
-            self.cursor.execute(q['acceso']['checkAccess'].format(uid,bloque,sala))
+        self.cursor.execute(q['acceso']['checkAccess'].format(uid,bloque,sala))
         data = self.cursor.fetchone()
         self.cursor.close()
         if data[0] != '':

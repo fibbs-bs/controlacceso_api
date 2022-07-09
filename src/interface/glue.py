@@ -180,21 +180,32 @@ def getAccess(uid,sala):
         rut = pgConn.getRut(uid)
     except Exception as e:
         rut = liteConn.getRut(uid)
-    finally:
-        pgConn.close()
     #Consultar a Tongoy API si el rut coincide con el bloque y sala
     if rut is not None:
         try:
             result = [tupla for tupla in TongoyAPI.get() if (tupla['rut']==rut)]
-            for tupla in result:
-                if tupla['id'] == sala and tupla['bloque']==bloques.getCurrentBlock():
-                    registrarAcceso(liteConn,rut,sala,'Si')
+            if not result:
+                dbRut = pgConn.selectUID(uid,bloques.getCurrentBlockAndDay(),sala)
+                print(dbRut)
+                if dbRut is None:
+                    registrarAcceso(pgConn,rut,sala,'No')
+                    pgConn.close()
+                    return 404
+                else:
+                    registrarAcceso(pgConn,rut,sala,'Si')
+                    pgConn.close()
                     return 200
-            registrarAcceso(liteConn,rut,sala,'No')
-            return 404
+            else:
+                for tupla in result:
+                    if tupla['id'] == sala and tupla['bloque']==bloques.getCurrentBlock():
+                        registrarAcceso(liteConn,rut,sala,'Si')
+                        return 200
+                registrarAcceso(liteConn,rut,sala,'No')
+                return 404
         #Si lanza error significa que no posee conexión a Tongoy, por lo que tocará revisar en SQLite
         #para comprobar el último backup realizado.
         except Exception as e:
+            print(e)
             try:
                 dbRut = liteConn.selectUID(uid,bloques.getCurrentBlockAndDay(),sala)
                 if dbRut is None:
@@ -203,7 +214,8 @@ def getAccess(uid,sala):
                 else:
                     registrarAcceso(liteConn,rut,sala,'Si')
                     return 200
-            except:
+            except Exception as e:
+                print(e)
                 liteConn.close()
                 return 500
     else:
