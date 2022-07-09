@@ -218,5 +218,7 @@ def registrarUID(rut,uid):
         liteConn.update('persona',uid,rut)
         pgConn.update('persona',uid,rut)
         return 200
-    except:
+    except Exception as e:
+
+        print(e)
         return 500

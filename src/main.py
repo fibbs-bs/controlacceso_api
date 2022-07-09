@@ -1,8 +1,9 @@
 import interface.glue as glue
 
-codigoSala = 353
+codigoSala = 39
 
 if __name__ == '__main__':
     #cardUid = '25BEFBC2'#Pineda
-    cardUid = '25BEFBC3'#Profe de rut 93370783
-    print(glue.getAccess(cardUid,codigoSala))
+    cardUid = '8DADABAE'#Profe Alejandro
+    #print(glue.getAccess(cardUid,codigoSala))
+    print(glue.registrarUID('20274611K','HOLA'))

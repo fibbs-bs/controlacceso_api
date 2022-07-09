@@ -80,9 +80,9 @@ class DbConnection(object):
         self.cursor.execute(q[table]['insert'].format(A,B,C,D,E,F))
         self.conn.commit()
 
-    def update(self,table,a):
+    def update(self,table,a,b):
         self.cursor = self.conn.cursor()
-        self.cursor.execute(q[table]['update'].format(a))
+        self.cursor.execute(q[table]['update'].format(a,b))
         self.conn.commit()
         self.close()
 
