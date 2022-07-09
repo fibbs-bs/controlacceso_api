@@ -50,7 +50,7 @@ authCtrl.getHistorialAcceso = async function (req,res) {
 
 authCtrl.getRuts = async function (req,res) {
     await db.query(
-        `select p.rut from persona p`
+        `select rut from persona where uid is not NULL and uid != ''`
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({
@@ -274,7 +274,7 @@ authCtrl.eliminarAcceso = async function (req,res){
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({
-                msg: "No existe un usuario con ese rut."
+                msg: "No existe dicho acceso-usuario"
             })
         }
         else{
