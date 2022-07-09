@@ -74,7 +74,7 @@ authCtrl.getRuts = async function (req,res) {
 
 authCtrl.getBloques = async function (req,res) {
     await db.query(
-        `select p.bloque from planificacion p`
+        `select distinct p.bloque from planificacion p`
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({
