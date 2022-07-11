@@ -142,13 +142,13 @@ authCtrl.registrarUsuario = async function (req,res){
 
         const generateQR = async text => {
             try{
-                await QRCode.toFile('./images/QRAcceso.png', text);
+                await QRCode.toFile('./images/QRRegistro.png', text);
             } catch(err){
                 console.error(err)
             }
         }
 
-        generateQR("ACS-"+rut)
+        generateQR("RGS-"+rut)
 
         // Step 1
         let transporter = nodemailer.createTransport({
@@ -164,11 +164,11 @@ authCtrl.registrarUsuario = async function (req,res){
         let mailOptions = {
             from: process.env.EMAIL, // TODO: email sender
             to: correo, // TODO: email receiver
-            subject: 'QR Acceso salas',
-            html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el acceso a las salas<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><p style = "text-align:left;"><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul></p>',
+            subject: 'QR Registro salas',
+            html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el registro al sistema<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><p style = "text-align:left;"><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul></p>',
             attachments: [{
-                filename: 'QRAcceso.png',
-                path: './images/QRAcceso.png',
+                filename: 'QRRegistro.png',
+                path: './images/QRRegistro.png',
                 cid: 'qr'
             }]
         };
@@ -210,13 +210,13 @@ authCtrl.registrarUsuario = async function (req,res){
 
             const generateQR = async text => {
                 try{
-                    await QRCode.toFile('./images/QRAcceso.png', text);
+                    await QRCode.toFile('./images/QRRegistro.png', text);
                 } catch(err){
                     console.error(err)
                 }
             }
 
-            generateQR("ACS-"+rut)
+            generateQR("RGS-"+rut)
 
             // Step 1
             let transporter = nodemailer.createTransport({
@@ -232,11 +232,11 @@ authCtrl.registrarUsuario = async function (req,res){
             let mailOptions = {
                 from: process.env.EMAIL, // TODO: email sender
                 to: correo, // TODO: email receiver
-                subject: 'QR Acceso salas',
-                html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el acceso a las salas<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul>',
+                subject: 'QR Registro salas',
+                html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el registro al sistema<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul>',
                 attachments: [{
-                    filename: 'QRAcceso.png',
-                    path: './images/QRAcceso.png',
+                    filename: 'QRRegistro.png',
+                    path: './images/QRRegistro.png',
                     cid: 'qr'
                 }]
             };
@@ -310,7 +310,9 @@ authCtrl.generarAcceso = async function (req,res){
     sala = req.body.sala;
 
     await db.query(
-        `select rut from acceso where rut = $1 and id_planificacion = (select id from planificacion where bloque = $2 and sala= $3)`,[rut,bloque,sala]
+        `select p.uid, p.correo from acceso m 
+        inner join persona p on (p.rut=m.rut)
+        where m.rut= $1 and m.id_planificacion = (select id from planificacion where bloque = $2 and sala= $3)`,[rut,bloque,sala]
     ).then((data)=>{
         if (data.rowCount!=0){
             res.status(404).json({
@@ -318,6 +320,8 @@ authCtrl.generarAcceso = async function (req,res){
             })
         }
         else{
+            
+            
             insercion = async function (){
 
                 var bloquesep=bloque.split('')
@@ -339,14 +343,96 @@ authCtrl.generarAcceso = async function (req,res){
                     res.status(200).json({
                         msg: "Acceso generado"
                     })
+
+
                 }).catch((err)=>{
                     res.status(500).json({
                         err,
                         msg: "Error interno en el servidor."
                     })
                 })
+
+
+
+                await db.query(
+                    `select p.uid, p.correo, t.bloque, c.nombre from acceso m 
+                    inner join persona p on (p.rut=m.rut)
+                    inner join planificacion t on (t.id =m.id_planificacion)
+                    inner join sala c on (c.codigo=t.sala)
+                    where m.rut= $1 and m.id_planificacion = (select id from planificacion where bloque = $2 and sala= $3)`,[rut,bloque,sala]
+                ).then((data)=>{
+                   
+                    var uid = data.rows[0]['uid']
+                    var correo = data.rows[0]['correo']
+                    var bloqueasignado = data.rows[0]['bloque']
+                    var salaasignada = data.rows[0]['nombre']
+                    
+                    const nodemailer = require('nodemailer');
+                    const log = console.log;
+                    require('dotenv').config();
+                    const QRCode = require('qrcode')
+
+                    const generateQR = async text => {
+                        try{
+                            await QRCode.toFile('./images/QRAcceso.png', text);
+                        } catch(err){
+                            console.error(err)
+                        }
+                    }
+
+                    generateQR("ACS-"+uid)
+
+                    // Step 1
+                    let transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: process.env.EMAIL, // TODO: your gmail account
+                            pass: process.env.PASSWORD // TODO: your gmail password
+                        },
+                        port: 485
+                    });
+
+                    // Step 2
+                    let mailOptions = {
+                        from: process.env.EMAIL, // TODO: email sender
+                        to: correo, // TODO: email receiver
+                        subject: 'QR Acceso salas',
+                        html: 'Estimado(a), a continuación se le adjunta su codigo QR de acceso<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><p style = "text-align:left;"><ul><li>Sala: '+salaasignada+'.</li><li>Bloque: '+bloqueasignado+'.</li></ul></p>',
+                        attachments: [{
+                            filename: 'QRAcceso.png',
+                            path: './images/QRAcceso.png',
+                            cid: 'qr'
+                        }]
+                    };
+
+                    // Step 3
+                    transporter.sendMail(mailOptions, (err, data) => {
+                        if (err) {
+                            
+                            return log('Error occurs');
+            
+                        }
+                        
+                        return log('Email sent!!!');
+                    });
+
+
+
+
+                }).catch((err)=>{
+                    res.status(500).json({
+                        err,
+                        msg: "Error interno en el servidor."
+                    })
+                })
+
+
             }
             insercion();
+
+            
+
+
         }
     }).catch((err)=>{
         res.status(500).json({
