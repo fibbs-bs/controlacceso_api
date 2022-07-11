@@ -74,7 +74,8 @@ authCtrl.getRuts = async function (req,res) {
 
 authCtrl.getBloques = async function (req,res) {
     await db.query(
-        `select distinct p.bloque from planificacion p`
+        `select distinct p.bloque from planificacion p
+        order by p.bloque asc`
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({
@@ -99,7 +100,8 @@ authCtrl.getBloques = async function (req,res) {
 authCtrl.getSalas = async function (req,res) {
     await db.query(
         `select distinct p.sala, m.nombre as nombre_sala from planificacion p
-        inner join sala m on (m.codigo = p.sala)`
+        inner join sala m on (m.codigo = p.sala)
+        order by m.nombre asc`
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({
