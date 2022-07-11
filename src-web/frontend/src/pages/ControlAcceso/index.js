@@ -3,8 +3,9 @@ import { Grid, Container, Paper, Avatar, Typography, Button, TextField} from '@m
 import { makeStyles } from '@material-ui/core/styles'
 import {  LockOutlined as LockOutlinedIcon} from '@material-ui/icons'
 import axios from 'axios';
-
+import { Link } from 'react-router-dom';
 import { Form, } from 'react-bootstrap';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 
 
 const useStyles = makeStyles(theme=>({
@@ -42,6 +43,10 @@ const useStyles = makeStyles(theme=>({
     form:{
         width: '100%',
         marginTop: theme.spacing(1)
+    },
+    button:{
+        margin: theme.spacing(3, 0, 2),
+        marginLeft: 20
     },
     button1:{
         margin: theme.spacing(3, 0, 2), //mrgen general
@@ -97,11 +102,35 @@ export default function ControlAcceso(){
         .catch((e) => console.log(e))
     }
     
-    const generarAcceso = async () =>{
-        await (await axios.post ('http://localhost:4000/api/darAcceso', {sala: salaSeleccionada, bloque: bloqueSeleccionado, rut: rutSeleccionado}))
+    const darAcceso = async () =>{
+        await axios.post ('http://localhost:4000/api/darAcceso', {sala: salaSeleccionada, bloque: bloqueSeleccionado, rut: rutSeleccionado})
         .then(response =>{
-
+            if(response.status === 200){
+                console.log('Acceso generado')
+            }
+            else if (response.status === 404){
+                console.log('Usuario ya posee acceso previo a la sala y bloque seleccionados')
+            }else{
+                console.log("Error del servidor")
+            }
         })
+        .catch((e) => console.log(e))
+    }
+
+
+    const rechazarAcceso = async () =>{
+        await axios.post ('http://localhost:4000/api/delAcceso', {sala: salaSeleccionada, bloque: bloqueSeleccionado, rut: rutSeleccionado})
+        .then(response =>{
+            if(response.status === 200){
+                console.log('Acceso eliminado')
+            }
+            else if (response.status === 404){
+                console.log('No existe dicho acceso de usuario')
+            }else{
+                console.log("Error del servidor")
+            }
+        })
+        .catch((e) => console.log(e))
     }
 
     const changeSalaSeleccionada= (e) =>{
@@ -123,11 +152,22 @@ export default function ControlAcceso(){
         getBloques()
         getRuts()
     },[])
-    console.log({codigo_sala: salaSeleccionada})
-    console.log({bloque:bloqueSeleccionado})
-    console.log({rut:rutSeleccionado})
+
     return(
         <div>
+            
+            <Link style={{ textDecoration: 'none' }}  color='inherit' to ='/historialAccesos'>
+                <Button
+                    className= {classes.button}
+                    type = "button"
+                    variant = 'contained'
+                    endIcon = {<KeyboardReturnIcon/>}
+                    
+                >
+                    Atras
+                </Button>
+            </Link>
+        
             <Grid container component ='main' className={classes.root}>
                 <Container component={Paper} elevation={5} maxWidth = 'xs' className = {classes.container}>
                     <div className = {classes.div} align = 'center'> 
@@ -165,10 +205,10 @@ export default function ControlAcceso(){
                         </form>
                         <Grid container>
                             <Grid item xs = {6}>
-                                <Button align = 'center' className={classes.button1} size ='large'>Aprobar acceso</Button>
+                                <Button align = 'center' className={classes.button1} size ='large' onClick = {() => darAcceso()}>Aprobar acceso</Button>
                             </Grid>
                             <Grid item xs = {6}> 
-                                <Button align = 'center' className={classes.button2} size ='large'>Denegar acceso</Button>
+                                <Button align = 'center' className={classes.button2} size ='large' onClick = {() => rechazarAcceso()}>Denegar acceso</Button>
                             </Grid>
                         </Grid>    
                     </div>

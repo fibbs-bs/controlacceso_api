@@ -12,9 +12,10 @@ function App() {
         <Routes>
           <Route path = '/' element = {<RegistrosUsuarios/>}/>
           <Route path = 'loginAdmin' element = {<LoginAdmin/>}/>
-          <Route path = 'controlAcceso' element = {<ControlAcceso/>}/>
+          
           <Route element = {<PrivateRoute/>}>
             <Route exact path = 'historialAccesos' element = {<HistorialAccesos/>}/>
+            <Route path = 'controlAcceso' element = {<ControlAcceso/>}/>
           </Route>
           
         </Routes>

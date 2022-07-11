@@ -5,6 +5,8 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import BackdropFilter from "react-backdrop-filter";
 import { useAuth } from '../../Context/AuthContext';
+import { Link } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const useStyles = makeStyles ((theme) => ({
     icons: {
@@ -67,11 +69,22 @@ export default function HistorialSalas(){
       
         <div align = 'center'>
             <div align = 'right'>
+                <Link style={{ textDecoration: 'none' }}  color='inherit' to ='/controlAcceso'>
+                    <Button
+                        className= {classes.button}
+                        type = "button"
+                        variant = 'contained'
+                        size = 'large'
+                    >
+                        Control acceso
+                    </Button>
+                </Link>
                 <Button
                     className= {classes.button}
                     type = "button"
                     variant = 'contained'
                     onClick = {handleLogout}
+                    endIcon = {<LogoutIcon/>}
                 >
                     Logout
                 </Button>
@@ -103,26 +116,26 @@ export default function HistorialSalas(){
                         console.log("Rendered !");
                     }}
                 >
-                    <h2>Historial de Accesos</h2>
+                    <h2 style={{color:'white'}}>Historial de Accesos</h2>
                     <TableContainer>
                         <Table  id = 'tables'>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align = 'center'>Sala</TableCell>
-                                    <TableCell align = 'center'>Rut Usuario</TableCell>
-                                    <TableCell align = 'center'>Bloque</TableCell>
-                                    <TableCell align = 'center'>Fecha Inicio</TableCell>
-                                    <TableCell align = 'center'>Fecha Termino</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Sala</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Rut Usuario</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Bloque</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Hora Inicio</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Hora Termino</TableCell>
                                 </TableRow>
                             </TableHead>
-                            <TableBody>
+                            <TableBody >
                                 {data.map(historial => (
                                     <TableRow sx={{ '&:last-child td, &:last-child th': {border: 0}}}>
-                                        <TableCell align = 'center'>{historial.sala}</TableCell>
-                                        <TableCell align = 'center'>{historial.rut_usuario}</TableCell>
-                                        <TableCell align = 'center'>{historial.bloque}</TableCell>
-                                        <TableCell align = 'center'>{historial.fecha_inicio}</TableCell>
-                                        <TableCell align = 'center'>{historial.fecha_fin}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.sala}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.rut_usuario}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.bloque}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.inicio}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.fin}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
