@@ -90,14 +90,19 @@ export default function Login() {
             console.log(response.status)
             if (response.status === 200){
                 mostrarAlertaRegistroCorrecto()
+                setTimeout(() =>  {window.location.reload(false)}, 2000);
             }
+           
 
         })
         .catch(error => {
             console.log(error.request.status)
+            
             if (error.request.status === 406){
                 console.log("Usuario ya registrado")
-                mostrarAlertaUsuarioRegistrado()
+                mostrarAlertaUsuarioRegistrado();
+                setTimeout(() =>  {window.location.reload(false)}, 2000);
+                //mostrarAlertaUsuarioRegistrado()
             }
             else{
                 mostrarServerError()
@@ -203,6 +208,7 @@ export default function Login() {
                 </Container>
  
             </Grid>
+            <br></br>
         </div>
     )
 }
