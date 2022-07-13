@@ -121,21 +121,25 @@ export default function HistorialSalas(){
                         <Table  id = 'tables'>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align = 'center' style={{color:'white'}}>Sala</TableCell>
-                                    <TableCell align = 'center' style={{color:'white'}}>Rut Usuario</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Rut</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Nombre</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Dia</TableCell>
                                     <TableCell align = 'center' style={{color:'white'}}>Bloque</TableCell>
-                                    <TableCell align = 'center' style={{color:'white'}}>Hora Inicio</TableCell>
-                                    <TableCell align = 'center' style={{color:'white'}}>Hora Termino</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Sala</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Fecha de acceso</TableCell>
+                                    <TableCell align = 'center' style={{color:'white'}}>Acceso</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody >
                                 {data.map(historial => (
                                     <TableRow sx={{ '&:last-child td, &:last-child th': {border: 0}}}>
-                                        <TableCell align = 'center' style={{color:'white'}}>{historial.sala}</TableCell>
-                                        <TableCell align = 'center' style={{color:'white'}}>{historial.rut_usuario}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.rut}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.nombre}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.dia}</TableCell>
                                         <TableCell align = 'center' style={{color:'white'}}>{historial.bloque}</TableCell>
-                                        <TableCell align = 'center' style={{color:'white'}}>{historial.inicio}</TableCell>
-                                        <TableCell align = 'center' style={{color:'white'}}>{historial.fin}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.sala}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.fecha_acceso}</TableCell>
+                                        <TableCell align = 'center' style={{color:'white'}}>{historial.acceso}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
