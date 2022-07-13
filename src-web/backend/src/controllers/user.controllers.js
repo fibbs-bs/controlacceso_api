@@ -9,11 +9,10 @@ const authCtrl = {};
 
 authCtrl.getHistorial = async (req,res) => {
     await db.query(
-        `select t.nombre as sala, m.rut as rut_usuario,
-        p.bloque as bloque, h.inicio, h.fin from acceso m
-        inner join planificacion p on (m.id_planificacion = p.id)
-        inner join sala t on (t.codigo = p.sala)
-		inner join horario h on (h.bloque = p.bloque) `
+        `select p.rut,p.nombre,m.dow as dia,m.bloque,t.nombre as sala,
+        m.cuando as fecha_acceso,m.acceso from registro m
+        inner join sala t on (t.codigo=m.sala)
+        inner join persona p on (p.rut=m.rut) `
     ).then((result)=>{
         res.status(200).json(result.rows)
     })
@@ -22,11 +21,10 @@ authCtrl.getHistorial = async (req,res) => {
 
 authCtrl.getHistorialAcceso = async function (req,res) {
     await db.query(
-        `select t.nombre as sala, m.rut as rut_usuario,
-        p.bloque as bloque, h.inicio, h.fin from acceso m
-        inner join planificacion p on (m.id_planificacion = p.id)
-        inner join sala t on (t.codigo = p.sala)
-		inner join horario h on (h.bloque = p.bloque) `
+        `select p.rut,p.nombre,m.dow as dia,m.bloque,t.nombre as sala,
+        m.cuando as fecha_acceso,m.acceso from registro m
+        inner join sala t on (t.codigo=m.sala)
+        inner join persona p on (p.rut=m.rut) `
     ).then((data)=>{
         if (data.rowCount==0){
             res.status(404).json({
@@ -167,7 +165,7 @@ authCtrl.registrarUsuario = async function (req,res){
             from: process.env.EMAIL, // TODO: email sender
             to: correo, // TODO: email receiver
             subject: 'QR Registro salas',
-            html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el registro al sistema:<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><p style = "text-align:left;"><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC y espera que el token muestre la luz morada.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz celeste.</li><li>Mientras esté la luz celeste, acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>En el caso de visualizar una luz roja debes contactarte con la administración debido a que tu registro no fue realizado satisfactoriamente.</li></ul></p>',
+            html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el registro al sistema:<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><p style = "text-align:left;"><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC y espera que el token muestre la luz celeste.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz celeste para escanear tu QR.</li><li>Mientras esté la luz blanca, acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando se apague la luz blanca.</li><li>Se encenderá la luz verde si el acceso es permitido, en el caso de visualizar una luz roja debes contactarte con la administración debido a que tu registro no fue realizado satisfactoriamente.</li></ul></p>',
             attachments: [{
                 filename: 'QRRegistro.png',
                 path: './images/QRRegistro.png',
@@ -235,7 +233,7 @@ authCtrl.registrarUsuario = async function (req,res){
                 from: process.env.EMAIL, // TODO: email sender
                 to: correo, // TODO: email receiver
                 subject: 'QR Registro salas',
-                html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el registro al sistema<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz amarilla.</li><li>Cuando la luz amarilla esté prendida acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando aparezca la luz verde.</li><li>Podrás visualizar si la transacción de registro de tu tarjeta fue realizada correctamente o no en la pantalla del lector.</li></ul>',
+                html: 'Gracias '+nombre+' por registrarte en Acceso Salas UCN.<br>A continuación se le adjunta su codigo QR para el registro al sistema:<br><br><p style = "text-align:center;"><img src="cid:qr"/></p><br><br><p style = "text-align:left;"><ul><li>Dirígete a cualquier token de acceso en cualquier sala de la EIC y espera que el token muestre la luz celeste.</li><li>Escanea el QR enviado a tu correo registrado en la página web y espera a la luz celeste para escanear tu QR.</li><li>Mientras esté la luz blanca, acerca tu tarjeta estudiantil UCN al puerto de lector de chips (lector RFID).</li><li>Retira tu tarjeta cuando se apague la luz blanca.</li><li>Se encenderá la luz verde si el acceso es permitido, en el caso de visualizar una luz roja debes contactarte con la administración debido a que tu registro no fue realizado satisfactoriamente.</li></ul></p>',
                 attachments: [{
                     filename: 'QRRegistro.png',
                     path: './images/QRRegistro.png',
