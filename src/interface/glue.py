@@ -184,24 +184,19 @@ def getAccess(uid,sala):
     if rut is not None:
         try:
             result = [tupla for tupla in TongoyAPI.get() if (tupla['rut']==rut)]
-            if not result:
-                dbRut = pgConn.selectUID(uid,bloques.getCurrentBlockAndDay(),sala)
-                print(dbRut)
-                if dbRut is None:
-                    registrarAcceso(pgConn,rut,sala,'No')
-                    pgConn.close()
-                    return 404
-                else:
-                    registrarAcceso(pgConn,rut,sala,'Si')
-                    pgConn.close()
+            for tupla in result:
+                if tupla['id'] == sala and tupla['bloque']==bloques.getCurrentBlock():
+                    registrarAcceso(liteConn,rut,sala,'Si')
                     return 200
-            else:
-                for tupla in result:
-                    if tupla['id'] == sala and tupla['bloque']==bloques.getCurrentBlock():
-                        registrarAcceso(liteConn,rut,sala,'Si')
-                        return 200
-                registrarAcceso(liteConn,rut,sala,'No')
+            dbRut = pgConn.selectUID(uid,bloques.getCurrentBlockAndDay(),sala)
+            if dbRut is None:
+                registrarAcceso(pgConn,rut,sala,'No')
+                pgConn.close()
                 return 404
+            else:
+                registrarAcceso(pgConn,rut,sala,'Si')
+                pgConn.close()
+                return 200
         #Si lanza error significa que no posee conexión a Tongoy, por lo que tocará revisar en SQLite
         #para comprobar el último backup realizado.
         except Exception as e:

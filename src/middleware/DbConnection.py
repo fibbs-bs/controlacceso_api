@@ -19,6 +19,8 @@ class DbConnection(object):
         self.cursor.execute(q['acceso']['checkAccess'].format(uid,bloque,sala))
         data = self.cursor.fetchone()
         self.cursor.close()
+        if data is None:
+            return None
         if data[0] != '':
             return data[0]
         else:
@@ -93,3 +95,4 @@ class DbConnection(object):
             self.cursor.close()
         self.conn.close()
         del self
+
